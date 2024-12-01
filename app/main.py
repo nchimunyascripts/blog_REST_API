@@ -2,7 +2,7 @@
 from fastapi import FastAPI, Response, status, HTTPException, Depends
 from . import models, schemas, utils
 from .database import engine, get_db
-from .router import post, user
+from .router import post, user, auth
 
 models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
@@ -42,6 +42,7 @@ async def find_index_post(_id):
 
 app.include_router(post.router)
 app.include_router(user.router)
+app.include_router(auth.router)
 
 
 @app.get("/")
