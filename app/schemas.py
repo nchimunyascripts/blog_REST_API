@@ -26,18 +26,19 @@ class Post(PostBase):
     id: int
     created_at: datetime
     owner_id: int
-    owner: UserOut
+    owner: Optional[UserOut]
 
     class Config:
         orm_mode = True
 
 
 class PostOut(BaseModel):
-    post: Post
+    Post: Post
     vote: int
 
     class Config:
         orm_mode = True
+
 
 class UserCreate(BaseModel):
     email: EmailStr
