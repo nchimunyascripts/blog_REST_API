@@ -12,7 +12,7 @@ router = APIRouter(prefix='/posts', tags=['Posts'])
 @router.get("/", response_model=List[schemas.PostOut])
 async def get_posts(db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user),
                     limit: int = 10, skip: int = 0, search: Optional[str] = ""):
-    posts = (db.query(models.Post, func.count(models.Vote.post_id).label("vote")).join(models.Vote,
+    posts = (db.query(models.Post, func.count(models.Vote.post_id).label("votes")).join(models.Vote,
                     models.Vote.post_id == models.Post.id, isouter=True).group_by(models.Post.id).
                filter(models.Post.title.contains(search)).limit(limit).offset(skip).all())
     return posts
@@ -31,7 +31,7 @@ async def create_post(post: schemas.PostCreate, db: Session = Depends(get_db),
 
 @router.get('/{_id}', response_model=schemas.PostOut)
 async def get_post(_id: int, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
-    post = (db.query(models.Post, func.count(models.Vote.post_id).label("vote"))
+    post = (db.query(models.Post, func.count(models.Vote.post_id).label("votes"))
             .join(models.Vote, models.Vote.post_id == models.Post.id, isouter=True)
             .group_by(models.Post.id).filter(models.Post.id == _id).first())
     if not post:
